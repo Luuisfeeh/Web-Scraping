@@ -1,3 +1,5 @@
+# Teste de commit
+
 # Importando a biblioteca Pandas nomeando como 'pd"
 import pandas as pd 
 # Importando da biblioteca Selenium alguns comando
