@@ -1,5 +1,6 @@
 # importando a biblioteca Psycopg2 
 import psycopg2
+from sqlalchemy import create_engine
 # Importando a biblioteca Pandas nomeando como 'pd"
 import pandas as pd 
 # Importando da biblioteca Selenium alguns comando
@@ -8,7 +9,15 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
 #Definindo uma conxão com o Servidor Local no Dbeaver
-conexao = psycopg2.connect(host='localhost', port='5432', dbname='postgres', user='postgres', password='Lua20022020%')
+host='localhost'
+port='5432'
+dbname='postgres'
+user='postgres'
+password='Lua20022020%'
+
+Connection = f'postgresql://{user}:{password}@{host}:{port}/{dbname}'
+
+conexao = create_engine(Connection)
 
 # Para o Selenium funcionar precisamos "abrir" o chrome para nós puxarmos os dados da URL
 service = Service() # Comando para iniciar uma intancia do Chrome WebDriver
@@ -62,7 +71,7 @@ realease = []
 tabela = '"DataBase".tabela'
 Nome = '"Name"'
 
-cur = conexao.cursor()
+
 
 for i in NameGame:
     nomes.append(i.text)
@@ -82,13 +91,16 @@ for i in RealeaseGame:
 
 
 Dframe = {'Name': nomes,
-          'Porcentagem': rank,
-          'Price': price,
-          'Rating': rating,
+          'porcentagem': rank,
+          'price': price,
+          'rating': rating,
           'Realease': realease}
 
 
-print(pd.DataFrame(Dframe))
+DataF = pd.DataFrame(Dframe)
+
+DataF.to_sql('Tabela_de_Infos',conexao, schema='DataBase', index=False)
+
 
 
 
