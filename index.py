@@ -7,8 +7,13 @@ import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+# Importante a libs Datetime
+import datetime
 
-#Definindo uma conxão com o Servidor Local no Dbeaver
+# definindo uma variavel para a data atual
+Atual = datetime.datetime.today().strftime("%d-%m-%y")
+
+#Definindo uma conxão com o Servidor Local no Dbeaver e criando um cursor
 host='localhost'
 port='5432'
 dbname='postgres'
@@ -16,8 +21,14 @@ user='postgres'
 password='Lua20022020%'
 
 Connection = f'postgresql://{user}:{password}@{host}:{port}/{dbname}'
+Connection1 = psycopg2.connect(host=host,
+                               port=port ,
+                               database=dbname,
+                               user=user,
+                               password=password)
 
 conexao = create_engine(Connection)
+cur = Connection1.cursor()
 
 # Para o Selenium funcionar precisamos "abrir" o chrome para nós puxarmos os dados da URL
 service = Service() # Comando para iniciar uma intancia do Chrome WebDriver
@@ -91,31 +102,25 @@ for i in RealeaseGame:
 
 
 Dframe = {'Name': nomes,
-          'porcentagem': rank,
-          'price': price,
-          'rating': rating,
+          'Porcentagem': rank,
+          'Price': price,
+          'Rating': rating,
           'Realease': realease}
 
 
 DataF = pd.DataFrame(Dframe)
 
+
+
+# Método no qual cria uma tabela e para que haja atualixação o execute elimina a tabela atual e cria novamente uma mais recente
+'''
+cur.execute('drop table "Tabela_de_Infos" ')
+Connection1.close()
 DataF.to_sql('Tabela_de_Infos',conexao, schema='DataBase', index=False)
-
-
-
-
-
-
-
-
-
-
-'''
-for n in nomes:
-    cur.execute(f"update {tabela} set {Nome} = %s",(n,))
 '''
 
-
+# Método que cria uma tabela com a data atual da atualização
+DataF.to_sql("Tabela_de_Infos_"+Atual,conexao, schema='DataBase', index=False)
 
 
 
